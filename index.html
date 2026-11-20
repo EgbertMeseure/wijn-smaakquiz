@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="nl-BE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smaakquiz voor wijnhandelaars — drie stijlen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Jost:wght@400;500;600&family=Oswald:wght@600&family=Outfit:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#161210;--mute:#5c544e;--line:#e4ddd4;--bg:#f7f3ec}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Outfit','Helvetica Neue',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+header{padding:22px 0}
+.brand{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.hero{padding:36px 0 48px;max-width:760px}
+.hero .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9E3446;margin-bottom:14px}
+.hero h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6.4vw,68px);line-height:1.08;letter-spacing:-.02em}
+.hero p{margin-top:18px;color:var(--mute);font-size:18px;max-width:38em}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding-bottom:64px}
+.card{display:flex;flex-direction:column;min-height:420px;border:1px solid var(--line);overflow:hidden;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(22,18,16,.1)}
+.card .preview{height:220px;padding:28px 24px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.card .preview span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.8}
+.card .preview strong{display:block;font-size:32px;line-height:.95;margin-top:10px}
+.card .meta{padding:22px 24px 24px;background:#fff;flex:1;display:flex;flex-direction:column}
+.card .meta h2{font-size:18px;font-weight:500;margin-bottom:8px}
+.card .meta p{color:var(--mute);font-size:14.5px;flex:1}
+.card .meta .go{margin-top:18px;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+
+/* style previews */
+.c1 .preview{background:#141012;color:#F1EBE1}
+.c1 .preview strong{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:-.01em;font-size:34px}
+.c1 .preview em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;color:#E3A9B2;text-transform:none;font-weight:400}
+.c1 .go{color:#7A1F2B}
+
+.c2 .preview{background:#fff;color:#111;border-bottom:1px solid var(--line)}
+.c2 .preview strong{font-family:'Outfit',sans-serif;font-weight:500;letter-spacing:-.03em;font-size:30px}
+.c2 .preview em{font-style:normal;font-weight:500}
+.c2 .go{color:#111}
+
+.c3 .preview{background:#F3E6C9;color:#2C1810;background-image:radial-gradient(rgba(44,24,16,.05) 1px,transparent 1px);background-size:6px 6px}
+.c3 .preview strong{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:36px}
+.c3 .preview em{font-style:italic;color:#8C6B28}
+.c3 .go{color:#8C6B28}
+
+footer{margin-top:auto;border-top:1px solid var(--line);padding:20px 0;color:var(--mute);font-size:13px}
+
+@media (max-width:900px){
+  .hero{padding:24px 0 32px}
+  .grid{grid-template-columns:1fr;gap:16px;padding-bottom:48px}
+  .card{min-height:0}
+  .card .preview{height:180px}
+}
+
+html.shot-full,html.shot-full body{min-height:0!important;height:auto!important}
+html.shot-full .intro,html.shot-full .quiz{min-height:0!important}
+html.shot-full footer{margin-top:0!important}
+html.shot-full .qfoot{position:static!important}
+
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">Smaakquiz · demo voor wijnhandelaars</div></div></header>
+<main class="wrap">
+  <section class="hero">
+    <p class="kicker">Drie looks, dezelfde keuzehulp</p>
+    <h1>Vind in één minuut de wijn die bij je past.</h1>
+    <p>Een neutrale smaakquiz die u naar klanten of collega-handelaars kunt sturen. Dezelfde zes vragen en hetzelfde voorbeeldassortiment, in drie verschillende stijlen. Uw eigen wijnen, logo en kleuren zijn later eenvoudig in te vullen.</p>
+  </section>
+  <section class="grid">
+    <a class="card c1" href="stijl-1.html">
+      <div class="preview"><span>Stijl 1</span><strong>Belief.<br><em>In wine.</em></strong></div>
+      <div class="meta"><h2>Editorial wijn</h2><p>Bordeaux, rosé en crème. Grote koppen, scherpe lijnen — de look van een wijnmagazine.</p><div class="go">Bekijk stijl 1 →</div></div>
+    </a>
+    <a class="card c2" href="stijl-2.html">
+      <div class="preview"><span>Stijl 2</span><strong>Vind in <em>één minuut</em> je wijn</strong></div>
+      <div class="meta"><h2>Licht &amp; modern</h2><p>Wit, veel lucht en een schreefloos lettertype. Strak en minimalistisch.</p><div class="go">Bekijk stijl 2 →</div></div>
+    </a>
+    <a class="card c3" href="stijl-3.html">
+      <div class="preview"><span>Stijl 3</span><strong>De wijn <em>die bij je past</em></strong></div>
+      <div class="meta"><h2>Klassiek &amp; warm</h2><p>Papier en crème, schreefletters en gouden accenten. Een klassieke, warme uitstraling.</p><div class="go">Bekijk stijl 3 →</div></div>
+    </a>
+  </section>
+</main>
+<footer><div class="wrap"><p>Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p></div></footer>
+<script>if(/(?:^|[?&])shot=full(?:&|$)/.test(location.search))document.documentElement.classList.add("shot-full");</script>
+</body>
+</html>
