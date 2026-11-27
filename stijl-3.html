@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Copyright (c) 2026 Egbert Meseure. All rights reserved. -->
 <html lang="nl-BE">
 <head>
 <meta charset="utf-8">
@@ -97,7 +98,25 @@ header .bar{display:flex;align-items:center;justify-content:space-between;height
 .qfoot .skip{color:var(--mute);font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:none;border:0;border-bottom:1px solid currentColor;padding:6px 0}
 .qfoot .skip:hover{color:var(--ink)}
 
-.res{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.res,.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.tier{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tier-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--gold)}
+.tier-head h3{font-family:var(--serif);font-weight:500;font-size:24px}
+.tier-head span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2)}
+.tier-empty,.tier-more{font-size:14px;color:var(--mute);font-family:var(--serif);font-style:italic}
+.tiers .rc .pic{height:150px}
+.tiers .rc .pic img,.tiers .rc .pic svg{height:125px}
+.tiers .rc h3{font-size:22px}
+.opt .cnt,.chip .cnt{display:block;font-family:var(--sans);font-size:13px;color:var(--mute);margin-top:4px}
+.opt.sel .cnt{color:#d9c7a8}
+.chip .cnt{display:inline;margin:0 0 0 6px}
+.order-qtys{max-width:760px;margin:0 0 26px}
+.ow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.ow-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ow-info strong{font-family:var(--serif);font-size:22px;font-weight:500}
+.ow-info span{font-size:13px;color:var(--mute)}
+.ow-empty{color:var(--mute)}
+
 .rc{position:relative;padding:18px 18px 22px;border:1px solid var(--line);background:var(--paper)}
 .rc.best{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
 .rc .m{position:absolute;right:14px;top:14px;background:var(--ink);color:var(--paper);font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:5px 9px;z-index:1}
@@ -138,7 +157,8 @@ footer p{font-size:13px;text-align:center;letter-spacing:.04em}
   .opt{min-height:100px;padding:16px;font-size:20px}
   .sl input{height:44px}
   .qty button,.qty input{height:52px}
-  .res{grid-template-columns:1fr}
+  .res,.tiers{grid-template-columns:1fr}
+  .ow{flex-wrap:wrap}
   .form{grid-template-columns:1fr}
   .qfoot{padding:12px var(--pad) calc(14px + env(safe-area-inset-bottom));position:sticky;bottom:0;background:var(--bg)}
   .qfoot .btn{min-height:48px;font-size:14px;letter-spacing:.1em}
@@ -155,19 +175,64 @@ html.shot-full .intro,html.shot-full .quiz{min-height:0!important}
 html.shot-full footer{margin-top:0!important}
 html.shot-full .qfoot{position:static!important}
 
+@media (min-width:701px) and (max-width:1100px){
+  .res,.tiers{grid-template-columns:repeat(2,1fr)}
+}
+
+html,body{overflow-x:hidden;max-width:100%}
+header .bar{flex-wrap:wrap;height:auto;min-height:64px;padding:8px 0;gap:8px 16px}
+.langs{display:flex;flex-wrap:wrap;gap:2px;margin-left:auto}
+.langs button{min-width:44px;min-height:44px;padding:0 8px;border:0;background:transparent;color:var(--mute);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-family:inherit}
+.langs button.on,.langs button[aria-pressed="true"]{color:var(--gold2);box-shadow:inset 0 -1px 0 var(--gold)}
+.langs button:hover{color:var(--gold2)}
+.answers{display:flex;flex-wrap:wrap;gap:8px;padding:10px var(--pad);border-bottom:1px solid var(--gold)}
+.answers[hidden]{display:none!important}
+.ans-chip{min-height:44px;padding:8px 14px;border:1px solid var(--gold);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--serif);max-width:100%}
+.ans-chip:hover{border-color:var(--ink)}
+.chip{white-space:normal;max-width:100%;min-height:44px}
+.opt,.btn,.chip,.ans-chip,.qty button{touch-action:manipulation}
+@media (max-width:900px){
+
+  header .bar{height:auto;padding:6px 0 10px}
+  .langs{flex:1 1 100%;justify-content:space-between;margin-left:0}
+  .styles{flex:1 1 100%;justify-content:flex-start}
+  .answers{padding:8px var(--pad) 10px;gap:8px}
+  .qty button,.qty input{min-width:44px;min-height:48px}
+}
+.styles a,.prices-link{min-height:44px;display:inline-flex;align-items:center}
+.brand{max-width:100%;overflow-wrap:anywhere}
+footer .copy{margin-top:8px;font-size:12px;opacity:.9}
+
+@media (max-width:900px){
+  .qfoot{flex-wrap:wrap;max-width:100%}
+  .qfoot .btn{min-width:0;max-width:100%;white-space:normal}
+  .qfoot #qnext{min-width:0;flex:1 1 auto}
+  .ans-chip,.chip{white-space:normal;overflow-wrap:anywhere;max-width:100%}
+  .step,.qbody,#res{max-width:100%;min-width:0}
+}
+@media (max-width:700px){
+  .tiers{grid-template-columns:1fr}
+}
 </style>
 </head>
-<body>
+<body data-i18n-title="meta.title.style3">
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="index.html" data-brand>Uw Wijnhuis</a>
-    <nav class="styles" aria-label="Andere stijlen">
-      <span class="styles-lbl">Stijl</span>
-      <a href="stijl-1.html">Editorial</a>
-      <a href="stijl-2.html">Licht</a>
-      <a href="stijl-3.html" class="on">Klassiek</a>
-          <a class="prices-link" href="index.html#prijzen">Prijzen</a>
+    <a class="brand" href="index.html" data-brand data-i18n="shop.name">Uw Wijnhuis</a>
+    <nav class="styles" data-i18n-aria="nav.styles" aria-label="Andere stijlen">
+      <span class="styles-lbl" data-i18n="nav.style">Stijl</span>
+      <a href="stijl-1.html" data-i18n="nav.editorial">Editorial</a>
+      <a href="stijl-2.html" data-i18n="nav.light">Licht</a>
+      <a href="stijl-3.html" class="on" data-i18n="nav.classic">Klassiek</a>
+          <a class="prices-link" href="index.html#prijzen" data-i18n="nav.prices">Prijzen</a>
+    </nav>
+    <nav class="langs" data-i18n-aria="nav.lang" aria-label="Taal">
+      <button type="button" data-lang="nl" aria-pressed="true">NL</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="es" aria-pressed="false">ES</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
     </nav>
   </div>
 </header>
@@ -175,133 +240,123 @@ html.shot-full .qfoot{position:static!important}
 <main>
   <section class="intro" id="intro">
     <div class="wrap intro-inner">
-      <p class="kicker">Smaakquiz</p>
-      <h1>Vind in <em>één minuut</em> de wijn die bij je past</h1>
-      <p class="lead">Beantwoord zes korte vragen over gelegenheid, gerecht en smaak. Wij stellen drie wijnen voor uit het assortiment. In deze demo zijn dat duidelijk gelabelde voorbeeldwijnen — zonder echte prijzen.</p>
-      <button class="btn" id="start" type="button">Start de keuzehulp</button>
+      <p class="kicker" data-i18n="intro.kicker">Smaakquiz</p>
+      <h1 data-i18n-html="intro.title">Vind in <em>één minuut</em> de wijn die bij je past</h1>
+      <p class="lead" data-i18n="intro.lead">Beantwoord vijf korte vragen over gelegenheid, gerecht en smaak. Wij stellen wijnen voor in vier prijscategorieën. In deze demo zijn dat duidelijk gelabelde voorbeeldwijnen, met voorbeeldprijzen.</p>
+      <button class="btn" id="start" type="button" data-i18n="intro.start">Start de keuzehulp</button>
     </div>
   </section>
 
   <section class="quiz" id="quiz" hidden>
     <div class="qhead">
-      <span class="tt" id="qtitle">Help mij kiezen</span>
-      <button class="restart" id="qreset" type="button">Opnieuw</button>
+      <span class="tt" id="qtitle" data-i18n="quiz.title">Help mij kiezen</span>
+      <button class="restart" id="qreset" type="button" data-i18n="quiz.reset">Opnieuw</button>
     </div>
+    <div class="answers" id="answers" hidden></div>
     <div class="prog" aria-hidden="true"><i id="pbar"></i></div>
     <div class="qbody">
       <div class="step" data-s="occ">
-        <span class="stepn">Stap 1 van 6 · Gelegenheid</span>
-        <h2>Waarvoor is de wijn?</h2>
-        <p class="hint">Kies er één.</p>
+        <span class="stepn">Stap 1 van 5 · Gelegenheid</span>
+        <h2 data-i18n="q.occ.h">Waarvoor is de wijn?</h2>
+        <p class="hint" data-i18n="q.occ.hint">Kies er één.</p>
         <div class="opts" data-q="occ" data-single>
-          <button class="opt" type="button" data-v="aperitief">Aperitief<small>Fris om mee te beginnen</small></button>
-          <button class="opt" type="button" data-v="diner">Diner<small>Bij een mooi gerecht</small></button>
-          <button class="opt" type="button" data-v="cadeau">Cadeau<small>Een fles om te verrassen</small></button>
-          <button class="opt" type="button" data-v="feest">Feest<small>Voor een groter gezelschap</small></button>
+          <button class="opt" type="button" data-v="aperitief"><span data-i18n="opt.occ.aperitief">Aperitief</span><small data-i18n="opt.occ.aperitief.hint">Fris om mee te beginnen</small></button>
+          <button class="opt" type="button" data-v="diner"><span data-i18n="opt.occ.diner">Diner</span><small data-i18n="opt.occ.diner.hint">Bij een mooi gerecht</small></button>
+          <button class="opt" type="button" data-v="cadeau"><span data-i18n="opt.occ.cadeau">Cadeau</span><small data-i18n="opt.occ.cadeau.hint">Een fles om te verrassen</small></button>
+          <button class="opt" type="button" data-v="feest"><span data-i18n="opt.occ.feest">Feest</span><small data-i18n="opt.occ.feest.hint">Voor een groter gezelschap</small></button>
         </div>
       </div>
       <div class="step" data-s="food">
-        <span class="stepn">Stap 2 van 6 · Gerecht</span>
-        <h2>Wat staat er op tafel?</h2>
-        <p class="hint">Meerdere keuzes mogelijk.</p>
+        <span class="stepn">Stap 2 van 5 · Gerecht</span>
+        <h2 data-i18n="q.food.h">Wat staat er op tafel?</h2>
+        <p class="hint" data-i18n="q.food.hint">Meerdere keuzes mogelijk.</p>
         <div class="opts c3" data-q="food">
-          <button class="opt" type="button" data-v="vis">Vis &amp; zeevruchten</button>
-          <button class="opt" type="button" data-v="vlees">Vlees</button>
-          <button class="opt" type="button" data-v="wild">Wild &amp; stoofvlees</button>
-          <button class="opt" type="button" data-v="kaas">Kaas</button>
-          <button class="opt" type="button" data-v="veg">Vegetarisch</button>
-          <button class="opt" type="button" data-v="dessert">Dessert / zonder eten</button>
+          <button class="opt" type="button" data-v="vis"><span data-i18n="opt.food.vis">Vis &amp; zeevruchten</span></button>
+          <button class="opt" type="button" data-v="vlees"><span data-i18n="opt.food.vlees">Vlees</span></button>
+          <button class="opt" type="button" data-v="wild"><span data-i18n="opt.food.wild">Wild &amp; stoofvlees</span></button>
+          <button class="opt" type="button" data-v="kaas"><span data-i18n="opt.food.kaas">Kaas</span></button>
+          <button class="opt" type="button" data-v="veg"><span data-i18n="opt.food.veg">Vegetarisch</span></button>
+          <button class="opt" type="button" data-v="dessert"><span data-i18n="opt.food.dessert">Dessert / zonder eten</span></button>
         </div>
       </div>
       <div class="step" data-s="color">
-        <span class="stepn">Stap 3 van 6 · Kleur</span>
-        <h2>Welke kleur?</h2>
-        <p class="hint">Meerdere keuzes mogelijk — of laat je verrassen.</p>
+        <span class="stepn">Stap 3 van 5 · Kleur</span>
+        <h2 data-i18n="q.color.h">Welke kleur?</h2>
+        <p class="hint" data-i18n="q.color.hint">Meerdere keuzes mogelijk — of laat je verrassen.</p>
         <div class="opts c3" data-q="color">
-          <button class="opt" type="button" data-v="rood"><span class="ic ic-rood">●</span>Rood</button>
-          <button class="opt" type="button" data-v="wit"><span class="ic ic-wit">●</span>Wit</button>
-          <button class="opt" type="button" data-v="rose"><span class="ic ic-rose">●</span>Rosé</button>
-          <button class="opt" type="button" data-v="bubbels"><span class="ic ic-bubbels">●</span>Bubbels</button>
-          <button class="opt" type="button" data-v="zoet"><span class="ic ic-zoet">●</span>Zoet</button>
-          <button class="opt" type="button" data-v="any"><span class="ic">✦</span>Verras me</button>
+          <button class="opt" type="button" data-v="rood"><span class="ic ic-rood">●</span><span data-i18n="opt.color.rood">Rood</span></button>
+          <button class="opt" type="button" data-v="wit"><span class="ic ic-wit">●</span><span data-i18n="opt.color.wit">Wit</span></button>
+          <button class="opt" type="button" data-v="rose"><span class="ic ic-rose">●</span><span data-i18n="opt.color.rose">Rosé</span></button>
+          <button class="opt" type="button" data-v="bubbels"><span class="ic ic-bubbels">●</span><span data-i18n="opt.color.bubbels">Bubbels</span></button>
+          <button class="opt" type="button" data-v="zoet"><span class="ic ic-zoet">●</span><span data-i18n="opt.color.zoet">Zoet</span></button>
+          <button class="opt" type="button" data-v="any"><span class="ic">✦</span><span data-i18n="opt.color.any">Verras me</span></button>
         </div>
       </div>
       <div class="step" data-s="taste">
-        <span class="stepn">Stap 4 van 6 · Smaakprofiel</span>
-        <h2>Hoe proef je het liefst?</h2>
-        <p class="hint">Schuif naar je voorkeur.</p>
-        <div class="sl"><span>Fris &amp; mineraal</span><input type="range" min="0" max="100" value="50" data-t="round"><span>Rond &amp; vol</span></div>
-        <div class="sl"><span>Licht</span><input type="range" min="0" max="100" value="50" data-t="body"><span>Krachtig</span></div>
-        <div class="sl"><span>Fruitig</span><input type="range" min="0" max="100" value="50" data-t="earthy"><span>Aards &amp; kruidig</span></div>
-        <div class="sl"><span>Droog</span><input type="range" min="0" max="100" value="20" data-t="sweet"><span>Zacht</span></div>
+        <span class="stepn">Stap 4 van 5 · Smaakprofiel</span>
+        <h2 data-i18n="q.taste.h">Hoe proef je het liefst?</h2>
+        <p class="hint" data-i18n="q.taste.hint">Schuif naar je voorkeur.</p>
+        <div class="sl"><span data-i18n="taste.fresh">Fris &amp; mineraal</span><input type="range" min="0" max="100" value="50" data-t="round"><span data-i18n="taste.round">Rond &amp; vol</span></div>
+        <div class="sl"><span data-i18n="taste.light">Licht</span><input type="range" min="0" max="100" value="50" data-t="body"><span data-i18n="taste.full">Krachtig</span></div>
+        <div class="sl"><span data-i18n="taste.fruit">Fruitig</span><input type="range" min="0" max="100" value="50" data-t="earthy"><span data-i18n="taste.earthy">Aards &amp; kruidig</span></div>
+        <div class="sl"><span data-i18n="taste.dry">Droog</span><input type="range" min="0" max="100" value="20" data-t="sweet"><span data-i18n="taste.soft">Zacht</span></div>
       </div>
       <div class="step" data-s="region">
-        <span class="stepn">Stap 5 van 6 · Streek &amp; stijl</span>
-        <h2>Favoriete streken of druiven?</h2>
-        <p class="hint">Optioneel — sla gerust over.</p>
+        <span class="stepn">Stap 5 van 5 · Streek &amp; stijl</span>
+        <h2 data-i18n="q.region.h">Favoriete streken of druiven?</h2>
+        <p class="hint" data-i18n="q.region.hint">Optioneel — sla gerust over.</p>
         <div class="chips" id="region-chips" data-q="region"></div>
-        <div class="sub2">Jouw stijl</div>
+        <div class="sub2" data-i18n="q.style.h">Jouw stijl</div>
         <div class="opts c2" data-q="style" data-single>
-          <button class="opt" type="button" data-v="classic">Klassiek<small>Grote namen en bekende appellaties</small></button>
-          <button class="opt" type="button" data-v="adv">Avontuurlijk<small>Vergeten streken, jonge wijnmakers</small></button>
+          <button class="opt" type="button" data-v="classic"><span data-i18n="opt.style.classic">Klassiek</span><small data-i18n="opt.style.classic.hint">Grote namen en bekende appellaties</small></button>
+          <button class="opt" type="button" data-v="adv"><span data-i18n="opt.style.adv">Avontuurlijk</span><small data-i18n="opt.style.adv.hint">Vergeten streken, jonge wijnmakers</small></button>
         </div>
-      </div>
-      <div class="step" data-s="budget">
-        <span class="stepn">Stap 6 van 6 · Budget &amp; aantal</span>
-        <h2>Budget en hoeveelheid</h2>
-        <p class="hint">Je budget per fles helpt bij een passend voorstel. In deze demo zijn de prijzen nog niet ingevuld (€ —).</p>
-        <div class="chips" data-q="budget" data-single>
-          <button class="chip" type="button" data-v="tot 20 euro">tot € 20</button>
-          <button class="chip" type="button" data-v="20-40 euro">€ 20 – 40</button>
-          <button class="chip" type="button" data-v="40-75 euro">€ 40 – 75</button>
-          <button class="chip" type="button" data-v="75+ euro">€ 75+</button>
-          <button class="chip" type="button" data-v="geen voorkeur">Geen voorkeur</button>
-        </div>
-        <div class="sub2">Aantal flessen</div>
-        <div class="qty"><button type="button" data-d="-1">−</button><input id="qn" value="6" inputmode="numeric" aria-label="Aantal flessen"><button type="button" data-d="1">+</button></div>
       </div>
       <div class="step" data-s="result">
         <span class="stepn">Jouw selectie</span>
-        <h2>Deze wijnen passen bij jou</h2>
-        <p class="hint" id="rhint">Op basis van je antwoorden, uit het voorbeeldassortiment.</p>
-        <div class="res" id="res"></div>
+        <h2 data-i18n="q.result.h">Deze wijnen passen bij jou</h2>
+        <p class="hint" id="rhint" data-i18n="q.result.hint">Op basis van je antwoorden, verdeeld over vier prijscategorieën. De prijzen en deze categorieën zijn voorbeelden — u past ze aan naar uw assortiment.</p>
+        <div class="tiers" id="res"></div>
       </div>
       <div class="step" data-s="order">
         <span class="stepn">Bestellen</span>
-        <h2 id="otitle">Jouw gegevens</h2>
-        <p class="hint" id="ohint">We bevestigen beschikbaarheid, prijs en levering persoonlijk. In deze demo opent de aanvraag als e-mail naar <span data-email>info@uwwijnhuis.be</span>.</p>
+        <h2 id="otitle" data-i18n="q.order.h">Jouw gegevens</h2>
+        <p class="hint" id="ohint">Kies per wijn het aantal flessen. We bevestigen beschikbaarheid, prijs en levering persoonlijk. In deze demo opent de aanvraag als e-mail naar <span data-email>info@uwwijnhuis.be</span>.</p>
+        <div id="order-qtys" class="order-qtys"></div>
         <div class="form">
-          <label>Naam<input id="f_name" placeholder="Voor- en achternaam" autocomplete="name"></label>
-          <label>E-mail<input id="f_mail" type="email" placeholder="naam@voorbeeld.be" autocomplete="email"></label>
-          <label>Telefoon<input id="f_tel" placeholder="+32 …" autocomplete="tel"></label>
-          <label>Levering<select id="f_lev"><option>Levering (in overleg)</option><option>Afhalen (in overleg)</option></select></label>
-          <label class="full">Opmerking<textarea id="f_note" rows="3" placeholder="Gewenste leverdatum, gelegenheid, vragen…"></textarea></label>
+          <label><span data-i18n="form.name">Naam</span><input id="f_name" placeholder="Voor- en achternaam" data-i18n-placeholder="form.name.ph" autocomplete="name"></label>
+          <label><span data-i18n="form.email">E-mail</span><input id="f_mail" type="email" placeholder="naam@voorbeeld.be" data-i18n-placeholder="form.email.ph" autocomplete="email"></label>
+          <label><span data-i18n="form.phone">Telefoon</span><input id="f_tel" placeholder="+32 …" autocomplete="tel"></label>
+          <label><span data-i18n="form.delivery">Levering</span><select id="f_lev"><option data-i18n="form.del.ship">Levering (in overleg)</option><option data-i18n="form.del.pickup">Afhalen (in overleg)</option></select></label>
+          <label class="full"><span data-i18n="form.note">Opmerking</span><textarea id="f_note" rows="3" placeholder="Gewenste leverdatum, gelegenheid, vragen…" data-i18n-placeholder="form.note.ph"></textarea></label>
         </div>
         <div class="sum" id="sum"></div>
       </div>
       <div class="step" data-s="thanks">
         <div class="thanks">
           <div class="tick">✓</div>
-          <h2>Bedankt!</h2>
+          <h2 data-i18n="thanks.h">Bedankt!</h2>
           <p id="tmsg">Je aanvraag is goed ontvangen. Uw Wijnhuis neemt snel contact met je op om je bestelling te bevestigen.</p>
-          <a class="btn" id="mailto" href="#">Open als e-mail</a>
+          <a class="btn" id="mailto" href="#" data-i18n="thanks.mailto">Open als e-mail</a>
         </div>
       </div>
     </div>
     <div class="qfoot">
-      <button class="btn ol" id="qback" type="button">← Vorige</button>
-      <button class="skip" id="qskip" type="button">Overslaan</button>
-      <button class="btn" id="qnext" type="button">Volgende →</button>
+      <button class="btn ol" id="qback" type="button" data-i18n="quiz.back">← Vorige</button>
+      <button class="skip" id="qskip" type="button" data-i18n="quiz.skip">Overslaan</button>
+      <button class="btn" id="qnext" type="button" data-i18n="quiz.next">Volgende →</button>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p>
+    <p data-i18n="footer">Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p>
+    <p class="copy" data-i18n="footer.copyright">© 2026 Egbert Meseure. Alle rechten voorbehouden.</p>
   </div>
 </footer>
 <script src="wines.js"></script>
+<script src="i18n.js"></script>
 <script src="quiz.js"></script>
 
 </body>

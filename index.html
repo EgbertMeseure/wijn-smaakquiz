@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Copyright (c) 2026 Egbert Meseure. All rights reserved. -->
 <html lang="nl-BE">
 <head>
 <meta charset="utf-8">
@@ -10,12 +11,14 @@
 <style>
 :root{--ink:#161210;--mute:#5c544e;--line:#e4ddd4;--bg:#f7f3ec}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);font-family:'Outfit','Helvetica Neue',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+html,body{overflow-x:hidden;max-width:100%;background:var(--bg);color:var(--ink);font-family:'Outfit','Helvetica Neue',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 body{min-height:100vh;display:flex;flex-direction:column}
 a{color:inherit;text-decoration:none}
 .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
 header{padding:22px 0}
-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-left:auto}
+.brand{max-width:100%;overflow-wrap:anywhere}
 .brand{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
 header .to-prices{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 header .to-prices:hover{color:var(--ink)}
@@ -54,11 +57,12 @@ header .to-prices:hover{color:var(--ink)}
 .pricing{padding:48px 0 72px;border-top:1px solid var(--line)}
 .pricing .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9E3446;margin-bottom:14px}
 .pricing h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,4.8vw,48px);line-height:1.12;letter-spacing:-.02em}
-.plans{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}
+.plans{display:grid;grid-template-columns:1.3fr .85fr;gap:22px;margin-top:28px;max-width:960px}
 .plan{background:#fff;border:1px solid var(--line);padding:32px 28px 28px;display:flex;flex-direction:column}
-.plan h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
-.plan .amount{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(44px,5vw,56px);line-height:1;letter-spacing:-.03em}
+.fees{display:grid;grid-template-columns:1fr 1fr;gap:28px 32px}
+.plan .amount{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(40px,5vw,52px);line-height:1;letter-spacing:-.03em}
 .plan .amount span{display:block;font-family:'Outfit','Helvetica Neue',system-ui,sans-serif;font-size:14px;letter-spacing:0;color:var(--mute);margin-top:10px;line-height:1.4}
+.fee-desc{margin-top:10px;color:var(--mute);font-size:15px;max-width:22em}
 .plan ul{list-style:none;margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
 .plan li{position:relative;padding:7px 0 7px 20px;font-size:15px}
 .plan li:before{content:"–";position:absolute;left:0;color:#9E3446}
@@ -66,7 +70,18 @@ header .to-prices:hover{color:var(--ink)}
 
 footer{margin-top:auto;border-top:1px solid var(--line);padding:20px 0;color:var(--mute);font-size:13px}
 
+.langs{display:flex;flex-wrap:wrap;gap:2px}
+.langs button{min-width:44px;min-height:44px;padding:0 8px;border:0;background:transparent;color:var(--mute);font-size:12px;font-weight:500;letter-spacing:.08em;font-family:inherit;cursor:pointer}
+.langs button.on,.langs button[aria-pressed="true"]{color:var(--ink);box-shadow:inset 0 -2px 0 #9E3446}
+.langs button:hover{color:var(--ink)}
+.plan.addon{justify-content:flex-start}
+.plan.addon h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
 @media (max-width:900px){
+  .header-right,.langs{flex:1 1 100%;margin-left:0}
+  .langs{justify-content:space-between}
+  header .to-prices{min-height:44px;display:inline-flex;align-items:center}
+  .plans{grid-template-columns:1fr!important}
+
   .hero{padding:24px 0 32px}
   .grid{grid-template-columns:1fr;gap:16px;padding-bottom:40px}
   .card{min-height:0}
@@ -74,6 +89,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding:20px 0;color:var
   .plans{grid-template-columns:1fr;gap:16px}
   .pricing{padding:36px 0 56px}
   .plan{padding:26px 22px}
+  .fees{grid-template-columns:1fr;gap:22px}
 }
 
 html.shot-full,html.shot-full body{min-height:0!important;height:auto!important}
@@ -81,64 +97,81 @@ html.shot-full .intro,html.shot-full .quiz{min-height:0!important}
 html.shot-full footer{margin-top:0!important}
 html.shot-full .qfoot{position:static!important}
 
+footer .copy{margin-top:8px;font-size:12px;opacity:.9}
 </style>
 </head>
-<body>
-<header><div class="wrap"><div class="brand">Smaakquiz · demo voor wijnhandelaars</div><a class="to-prices" href="#prijzen">Prijzen</a></div></header>
+<body data-i18n-title="meta.title.landing">
+<header><div class="wrap">
+  <div class="brand" data-i18n="brand.landing">Smaakquiz · demo voor wijnhandelaars</div>
+  <div class="header-right">
+  <a class="to-prices" href="#prijzen" data-i18n="nav.prices">Prijzen</a>
+  <nav class="langs" data-i18n-aria="nav.lang" aria-label="Taal">
+    <button type="button" data-lang="nl" aria-pressed="true">NL</button>
+    <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    <button type="button" data-lang="es" aria-pressed="false">ES</button>
+    <button type="button" data-lang="de" aria-pressed="false">DE</button>
+  </nav>
+  </div>
+</div></header>
 <main class="wrap">
   <section class="hero">
-    <p class="kicker">Drie looks, dezelfde keuzehulp</p>
-    <h1>Vind in één minuut de wijn die bij je past.</h1>
-    <p>Een neutrale smaakquiz die u naar klanten of collega-handelaars kunt sturen. Dezelfde zes vragen en hetzelfde voorbeeldassortiment, in drie verschillende stijlen. Uw eigen wijnen, logo en kleuren zijn later eenvoudig in te vullen.</p>
+    <p class="kicker" data-i18n="land.kicker">Drie looks, dezelfde keuzehulp</p>
+    <h1 data-i18n="land.h1">Vind in één minuut de wijn die bij je past.</h1>
+    <p data-i18n="land.lead">Een neutrale smaakquiz die u naar klanten of collega-handelaars kunt sturen. Dezelfde vijf vragen en hetzelfde voorbeeldassortiment, in drie verschillende stijlen. Wijnen verschijnen in vier prijscategorieën. Uw eigen wijnen, logo, kleuren en prijzen zijn later eenvoudig in te vullen.</p>
   </section>
   <section class="grid">
     <a class="card c1" href="stijl-1.html">
-      <div class="preview"><span>Stijl 1</span><strong>Belief.<br><em>In wine.</em></strong></div>
-      <div class="meta"><h2>Editorial wijn</h2><p>Bordeaux, rosé en crème. Grote koppen, scherpe lijnen — de look van een wijnmagazine.</p><div class="go">Bekijk stijl 1 →</div></div>
+      <div class="preview"><span data-i18n="land.style" data-i18n-n="1">Stijl 1</span><strong>Belief.<br><em>In wine.</em></strong></div>
+      <div class="meta"><h2 data-i18n="land.s1.name">Editorial wijn</h2><p data-i18n="land.s1.desc">Bordeaux, rosé en crème. Grote koppen, scherpe lijnen — de look van een wijnmagazine.</p><div class="go" data-i18n="land.view" data-i18n-n="1">Bekijk stijl 1 →</div></div>
     </a>
     <a class="card c2" href="stijl-2.html">
-      <div class="preview"><span>Stijl 2</span><strong>Vind in <em>één minuut</em> je wijn</strong></div>
-      <div class="meta"><h2>Licht &amp; modern</h2><p>Wit, veel lucht en een schreefloos lettertype. Strak en minimalistisch.</p><div class="go">Bekijk stijl 2 →</div></div>
+      <div class="preview"><span data-i18n="land.style" data-i18n-n="2">Stijl 2</span><strong>Vind in <em>één minuut</em> je wijn</strong></div>
+      <div class="meta"><h2 data-i18n="land.s2.name">Licht &amp; modern</h2><p data-i18n="land.s2.desc">Wit, veel lucht en een schreefloos lettertype. Strak en minimalistisch.</p><div class="go" data-i18n="land.view" data-i18n-n="2">Bekijk stijl 2 →</div></div>
     </a>
     <a class="card c3" href="stijl-3.html">
-      <div class="preview"><span>Stijl 3</span><strong>De wijn <em>die bij je past</em></strong></div>
-      <div class="meta"><h2>Klassiek &amp; warm</h2><p>Papier en crème, schreefletters en gouden accenten. Een klassieke, warme uitstraling.</p><div class="go">Bekijk stijl 3 →</div></div>
+      <div class="preview"><span data-i18n="land.style" data-i18n-n="3">Stijl 3</span><strong>De wijn <em>die bij je past</em></strong></div>
+      <div class="meta"><h2 data-i18n="land.s3.name">Klassiek &amp; warm</h2><p data-i18n="land.s3.desc">Papier en crème, schreefletters en gouden accenten. Een klassieke, warme uitstraling.</p><div class="go" data-i18n="land.view" data-i18n-n="3">Bekijk stijl 3 →</div></div>
     </a>
   </section>
 
   <section class="pricing" id="prijzen">
-    <p class="kicker">Prijzen</p>
-    <h2>Een eenmalige prijs of een maandbedrag</h2>
+    <p class="kicker" data-i18n="price.kicker">Prijzen</p>
+    <h2 data-i18n="price.title">Eén eenvoudig pakket</h2>
     <div class="plans">
       <article class="plan">
-        <h3>Eenmalig</h3>
-        <p class="amount">€ 850 <span>excl. btw</span></p>
+        <div class="fees">
+          <div>
+            <p class="amount">€ 550 <span data-i18n="price.onceExcl">eenmalig, excl. btw</span></p>
+            <p class="fee-desc" data-i18n="price.integrate">Integratie van uw collectie en alle info over de wijnen</p>
+          </div>
+          <div>
+            <p class="amount">+ € 25 <span data-i18n="price.monthExcl">per maand, excl. btw</span></p>
+            <p class="fee-desc" data-i18n="price.updates">Updates en aanpassingen</p>
+          </div>
+        </div>
         <ul>
-          <li>Smaakquiz met zes vragen</li>
-          <li>Drie wijnvoorstellen uit uw eigen assortiment</li>
-          <li>Keuze uit drie stijlen</li>
-          <li>Uw eigen logo en kleuren</li>
-          <li>Mobielvriendelijk</li>
-          <li>Bestel- of reserveerstap</li>
+          <li data-i18n="price.b1">Smaakquiz met vijf vragen</li>
+          <li data-i18n="price.b2">Wijnvoorstellen in vier prijscategorieën, uit uw eigen assortiment</li>
+          <li data-i18n="price.b3">Keuze uit drie stijlen</li>
+          <li data-i18n="price.b4">Uw eigen logo en kleuren</li>
+          <li data-i18n="price.b5">Mobielvriendelijk</li>
+          <li data-i18n="price.b6">Bestel- of reserveerstap</li>
         </ul>
       </article>
-      <article class="plan">
-        <h3>Abonnement</h3>
-        <p class="amount">€ 25 <span>per maand excl. btw</span></p>
-        <ul>
-          <li>Smaakquiz met zes vragen</li>
-          <li>Drie wijnvoorstellen uit uw eigen assortiment</li>
-          <li>Keuze uit drie stijlen</li>
-          <li>Uw eigen logo en kleuren</li>
-          <li>Mobielvriendelijk</li>
-          <li>Bestel- of reserveerstap</li>
-        </ul>
+
+      <article class="plan addon">
+        <h3 data-i18n="price.addon.title">Optie: in uw eigen huisstijl</h3>
+        <p class="amount">+ € 350 <span data-i18n="price.onceExcl">eenmalig, excl. btw</span></p>
+        <p class="fee-desc" data-i18n="price.addon.desc">De quiz in de huisstijl van uw website</p>
       </article>
     </div>
-    <p class="cta">Interesse? Neem contact op.</p>
+    <p class="cta" data-i18n="price.cta">Interesse? Neem contact op.</p>
   </section>
 </main>
-<footer><div class="wrap"><p>Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p></div></footer>
+<footer><div class="wrap"><p data-i18n="footer">Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p>
+    <p class="copy" data-i18n="footer.copyright">© 2026 Egbert Meseure. Alle rechten voorbehouden.</p></div></footer>
+<script src="i18n.js"></script>
 <script>if(/(?:^|[?&])shot=full(?:&|$)/.test(location.search))document.documentElement.classList.add("shot-full");</script>
 </body>
 </html>

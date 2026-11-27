@@ -1,10 +1,68 @@
+/* Copyright (c) 2026 Egbert Meseure. All rights reserved. */
 if (/(?:^|[?&])shot=full(?:&|$)/.test(location.search)) document.documentElement.classList.add('shot-full');
 /* Gedeelde quizlogica voor alle drie de stijlen.
-   Verwacht: wines.js (SHOP, REGIONS, WINES) en de HTML-structuur van de stijlpagina's. */
+   Verwacht: wines.js (SHOP, REGIONS, PRICE_TIERS, WINES) en de HTML van de stijlpagina's. */
 
 const COLOR_NAME = { rood: 'Rood', wit: 'Wit', rose: 'Rosé', bubbels: 'Bubbels', zoet: 'Zoet' };
 const FOOD_NAME = { vis: 'vis', vlees: 'vlees', wild: 'wild', kaas: 'kaas', veg: 'vegetarisch', dessert: 'dessert' };
-const FLOW = ['occ', 'food', 'color', 'taste', 'region', 'budget', 'result', 'order', 'thanks'];
+
+function wineName(w) { return t('wine.' + w.id + '.name'); }
+function wineDesc(w) {
+  const d = t('wine.' + w.id + '.desc');
+  const tail = t('wine.replace');
+  return tail ? d + ' ' + tail : d;
+}
+function wineArea(w) { return w.areaKey ? t(w.areaKey) : w.region; }
+
+function tasteLabels() {
+  const out = [];
+  const x = st.taste || {};
+  if (x.round <= .35) out.push(t('taste.chip.fresh'));
+  else if (x.round >= .65) out.push(t('taste.chip.round'));
+  if (x.body <= .35) out.push(t('taste.chip.light'));
+  else if (x.body >= .65) out.push(t('taste.chip.full'));
+  if (x.earthy <= .35) out.push(t('taste.chip.fruit'));
+  else if (x.earthy >= .65) out.push(t('taste.chip.earthy'));
+  if (x.sweet >= .5) out.push(t('taste.chip.soft'));
+  else if (x.sweet <= .2 && (x.round <= .35 || x.body <= .35)) out.push(t('taste.chip.dry'));
+  // unique, max 2
+  const seen = [];
+  out.forEach(l => { if (!seen.includes(l)) seen.push(l); });
+  return seen.slice(0, 2);
+}
+
+function renderAnswers() {
+  const box = document.getElementById('answers');
+  if (!box) return;
+  const chips = [];
+  const qIndex = key => Math.max(0, flow.indexOf(key));
+  const past = (key) => idx > qIndex(key) || (idx >= qIndex(key) && flow[idx] !== key);
+  // show a chip once the question has been answered / left
+  if (st.occ) chips.push({ jump: 'occ', label: t('opt.occ.' + st.occ) });
+  if (st.food.length) chips.push({ jump: 'food', label: st.food.map(f => t('opt.food.' + f)).join(' · ') });
+  if (st.color.length) {
+    const labs = st.color.map(c => t('opt.color.' + (c === 'any' ? 'any' : c)));
+    chips.push({ jump: 'color', label: labs.join(' · ') });
+  }
+  if (idx > qIndex('taste') || flow[idx] === 'result' || flow[idx] === 'order' || flow[idx] === 'thanks') {
+    const tl = tasteLabels();
+    if (tl.length) chips.push({ jump: 'taste', label: tl.join(' · ') });
+  }
+  if (st.region.length) chips.push({ jump: 'region', label: st.region.map(r => t('region.' + r)).join(' · ') });
+  if (st.style) chips.push({ jump: 'region', label: t('opt.style.' + st.style) });
+  if (!chips.length || flow[idx] === 'thanks') {
+    box.hidden = true;
+    box.innerHTML = '';
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = chips.map(c =>
+    `<button type="button" class="ans-chip" data-jump="${c.jump}">${c.label}</button>`
+  ).join('');
+}
+
+const QUESTIONS = ['occ', 'food', 'color', 'taste', 'region'];
+const FLOW = QUESTIONS.concat(['result', 'order', 'thanks']);
 
 const st = {
   occ: null,
@@ -12,10 +70,9 @@ const st = {
   color: [],
   region: [],
   style: null,
-  budget: null,
   taste: { round: .5, body: .5, earthy: .5, sweet: .2 },
-  qty: 6,
-  picks: []
+  picks: [],
+  qtys: {}
 };
 
 let flow = FLOW.slice(), idx = 0;
@@ -25,20 +82,21 @@ const quizEl = document.getElementById('quiz');
 const steps = [...document.querySelectorAll('.step')];
 
 function fillShop() {
-  document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = SHOP.name; });
+  document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = t('shop.name'); });
   document.querySelectorAll('[data-email]').forEach(el => { el.textContent = SHOP.email; });
   const tmsg = document.getElementById('tmsg');
-  if (tmsg) {
-    tmsg.textContent = 'Je aanvraag is goed ontvangen. ' + SHOP.name + ' neemt snel contact met je op om je bestelling te bevestigen.';
-  }
+  if (tmsg) tmsg.textContent = t('thanks.body', { shop: t('shop.name') });
+  const oh = document.getElementById('ohint');
+  if (oh) oh.innerHTML = t('q.order.hint', { email: '<span data-email>' + SHOP.email + '</span>' });
 }
 
 function renderRegions() {
   const box = document.getElementById('region-chips');
   if (!box) return;
   box.innerHTML = REGIONS.map(r =>
-    `<button type="button" class="chip" data-v="${r.key}">${r.label}</button>`
+    `<button type="button" class="chip" data-v="${r.key}">${t('region.' + r.key)}</button>`
   ).join('');
+  box.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('sel', st.region.includes(b.dataset.v)));
 }
 
 function showIntro() {
@@ -57,6 +115,14 @@ function showQuiz() {
 function show() {
   const key = flow[idx];
   steps.forEach(s => s.classList.toggle('on', s.dataset.s === key));
+  const stepNames = { occ: 'step.occ', food: 'step.food', color: 'step.color', taste: 'step.taste', region: 'step.region', result: 'step.result', order: 'step.order' };
+  steps.forEach(s => {
+    const sn = s.querySelector('.stepn');
+    if (!sn || !stepNames[s.dataset.s]) return;
+    const k = s.dataset.s;
+    if (k === 'result' || k === 'order') sn.textContent = t(stepNames[k]);
+    else sn.textContent = t('step.of', { n: QUESTIONS.indexOf(k) + 1, total: QUESTIONS.length, name: t(stepNames[k]) });
+  });
   const denom = Math.max(1, flow.length - 1);
   document.getElementById('pbar').style.width = Math.round(idx / denom * 100) + '%';
   const back = document.getElementById('qback');
@@ -68,12 +134,18 @@ function show() {
   nextBtn.style.display = key === 'thanks' ? 'none' : '';
   foot.style.display = key === 'thanks' ? 'none' : '';
   nextBtn.textContent =
-    key === 'budget' ? 'Toon mijn selectie →' :
-    key === 'result' ? 'Bestel of reserveer →' :
-    key === 'order' ? 'Verstuur aanvraag' :
-    'Volgende →';
+    key === 'region' ? t('quiz.show') :
+    key === 'result' ? t('quiz.order') :
+    key === 'order' ? t('quiz.send') :
+    t('quiz.next');
+  const backBtn = document.getElementById('qback');
+  if (backBtn) backBtn.textContent = t('quiz.back');
+  const skipBtn = document.getElementById('qskip');
+  if (skipBtn) skipBtn.textContent = t('quiz.skip');
   if (key === 'result') renderResult();
   if (key === 'order') renderOrder();
+  updateCounts();
+  renderAnswers();
   const body = document.querySelector('.qbody');
   if (body) body.scrollTop = 0;
   window.scrollTo(0, 0);
@@ -91,16 +163,13 @@ function resetQuiz() {
   st.color = [];
   st.region = [];
   st.style = null;
-  st.budget = null;
   st.taste = { round: .5, body: .5, earthy: .5, sweet: .2 };
-  st.qty = 6;
   st.picks = [];
+  st.qtys = {};
   document.querySelectorAll('.opt.sel, .chip.sel').forEach(el => el.classList.remove('sel'));
   document.querySelectorAll('[data-t]').forEach(r => {
     r.value = r.dataset.t === 'sweet' ? 20 : 50;
   });
-  const qn = document.getElementById('qn');
-  if (qn) qn.value = 6;
   ['f_name', 'f_mail', 'f_tel', 'f_lev', 'f_note'].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName !== 'SELECT') el.value = '';
@@ -140,7 +209,61 @@ function bindChoices(root) {
         }
         g.querySelectorAll('[data-v]').forEach(x => x.classList.toggle('sel', a.includes(x.dataset.v)));
       }
+      updateCounts();
     });
+  });
+}
+
+function snapshot() {
+  return {
+    occ: st.occ,
+    food: st.food.slice(),
+    color: st.color.slice(),
+    region: st.region.slice(),
+    style: st.style
+  };
+}
+
+function hardMatch(w, s) {
+  if (s.occ && !(w.occ || []).includes(s.occ)) return false;
+  if (s.food && s.food.length && !s.food.some(f => (w.food || []).includes(f))) return false;
+  const cols = s.color && s.color.length && !s.color.includes('any') ? s.color : null;
+  if (cols && !cols.includes(w.type)) return false;
+  if (s.region && s.region.length && !s.region.includes(w.regionKey)) return false;
+  return true;
+}
+
+function countFor(q, v) {
+  const s = snapshot();
+  if (q === 'style') {
+    return WINES.filter(w => hardMatch(w, s) && (v === 'classic' ? w.classic >= .55 : w.classic < .55)).length;
+  }
+  if (q === 'occ' || q === 'style') {
+    s[q] = v;
+  } else if (q === 'color' && v === 'any') {
+    s.color = ['any'];
+  } else {
+    s[q] = [v];
+  }
+  return WINES.filter(w => hardMatch(w, s)).length;
+}
+
+function wineWord(n) {
+  return n === 1 ? t('count.one') : t('count.many', { n: n });
+}
+
+function updateCounts() {
+  document.querySelectorAll('[data-q] [data-v]').forEach(b => {
+    const g = b.closest('[data-q]');
+    if (!g) return;
+    const n = countFor(g.dataset.q, b.dataset.v);
+    let el = b.querySelector('.cnt');
+    if (!el) {
+      el = document.createElement('span');
+      el.className = 'cnt';
+      b.appendChild(el);
+    }
+    el.textContent = wineWord(n);
   });
 }
 
@@ -162,17 +285,17 @@ function score(w) {
 function why(w) {
   const r = [];
   if (st.food.length) {
-    const f = st.food.filter(x => w.food.includes(x)).map(x => FOOD_NAME[x]);
-    if (f.length) r.push('past bij ' + f.join(' & '));
+    const f = st.food.filter(x => w.food.includes(x)).map(x => t('opt.food.' + x));
+    if (f.length) r.push(t('why.food', { food: f.join(' & ') }));
   }
-  if (st.occ && w.occ.includes(st.occ)) r.push('ideaal als ' + st.occ);
-  if (st.region.includes(w.regionKey)) r.push('jouw favoriete streek');
+  if (st.occ && w.occ.includes(st.occ)) r.push(t('why.occ', { occ: t('opt.occ.' + st.occ) }));
+  if (st.region.includes(w.regionKey)) r.push(t('why.region'));
   if (st.style) {
     r.push(w.classic > .6
-      ? (st.style === 'classic' ? 'klassieke waarde' : 'klassieker alternatief')
-      : (st.style === 'adv' ? 'avontuurlijke keuze' : 'verrassende keuze'));
+      ? (st.style === 'classic' ? t('why.classicYes') : t('why.classicAlt'))
+      : (st.style === 'adv' ? t('why.advYes') : t('why.advAlt')));
   }
-  return r.length ? '✓ ' + r.join(' · ') : '✓ sluit aan bij je smaakprofiel';
+  return r.length ? '✓ ' + r.join(' · ') : '✓ ' + t('why.default');
 }
 
 function bottle(w) {
@@ -188,26 +311,57 @@ function bottle(w) {
   </svg>`;
 }
 
+function formatPrice(w) {
+  const n = Number(w.price);
+  if (!isFinite(n)) return w.price || '€ —';
+  const s = '€ ' + n.toFixed(2).replace('.', ',');
+  return w.example ? s + ' ' + t('label.examplePrice') : s;
+}
+
+function inTier(w, tier) {
+  const n = Number(w.price);
+  if (!isFinite(n)) return false;
+  return n >= tier.min && n < tier.max;
+}
+
+function wineCard(x, maxInTier) {
+  const pct = Math.max(62, Math.round(98 * x.s / (maxInTier || x.s || 1)));
+  const ex = x.w.example ? '<span class="ex">' + t('label.exampleWine') + '</span>' : '';
+  const producer = (!x.w.example || (x.w.producer && x.w.producer.toLowerCase() !== 'voorbeeldwijn'))
+    ? `<b>${x.w.producer}</b> · ` : '';
+  return `<div class="rc">
+    <span class="m">${t('label.match', { pct: pct })}</span>
+    <div class="pic">${bottle(x.w)}</div>
+    <h3>${wineName(x.w)}</h3>
+    <div class="pr">${ex}${producer}${wineArea(x.w)} · ${x.w.grape} · ${t('opt.color.' + x.w.type)}</div>
+    <div class="price">${formatPrice(x.w)}</div>
+    <p>${wineDesc(x.w)}</p>
+    <div class="why">${why(x.w)}</div>
+  </div>`;
+}
+
 function renderResult() {
-  const ranked = WINES.map(w => ({ w, s: score(w) })).sort((a, b) => b.s - a.s);
-  const top = ranked.slice(0, 3);
-  const max = top[0] ? top[0].s : 1;
-  st.picks = top.map(x => x.w);
-  document.getElementById('res').innerHTML = top.map((x, i) => {
-    const pct = Math.max(62, Math.round(98 * x.s / max - i * 4));
-    const ex = x.w.example ? '<span class="ex">Voorbeeldwijn</span>' : '';
-    const producer = (!x.w.example || (x.w.producer && x.w.producer.toLowerCase() !== 'voorbeeldwijn'))
-      ? `<b>${x.w.producer}</b> · ` : '';
-    return `<div class="rc${i === 0 ? ' best' : ''}">
-      <span class="m">${pct}% match</span>
-      <div class="pic">${bottle(x.w)}</div>
-      <h3>${x.w.name}</h3>
-      <div class="pr">${ex}${producer}${x.w.region} · ${x.w.grape} · ${COLOR_NAME[x.w.type] || x.w.type}</div>
-      <div class="price">${x.w.price || '€ —'}</div>
-      <p>${x.w.description}</p>
-      <div class="why">${why(x.w)}</div>
+  const matched = WINES.filter(w => hardMatch(w, st)).map(w => ({ w, s: score(w) })).sort((a, b) => b.s - a.s);
+  const picks = [];
+  const html = (PRICE_TIERS || []).map(tier => {
+    const list = matched.filter(x => inTier(x.w, tier));
+    const top = list.slice(0, 2);
+    top.forEach(x => picks.push(x.w));
+    const max = list[0] ? list[0].s : 1;
+    const body = top.length
+      ? top.map(x => wineCard(x, max)).join('')
+      : '<p class="tier-empty">' + t('tier.empty') + '</p>';
+    const more = list.length > 2 ? `<p class="tier-more">${t('tier.more', { n: list.length })}</p>` : '';
+    return `<div class="tier">
+      <div class="tier-head"><h3>${t('tier.' + tier.key)}</h3><span>${t('tier.example')}</span></div>
+      ${body}${more}
     </div>`;
   }).join('');
+  st.picks = picks;
+  Object.keys(st.qtys).forEach(id => {
+    if (!picks.some(w => w.id === id)) delete st.qtys[id];
+  });
+  document.getElementById('res').innerHTML = html;
 }
 
 function val(id) {
@@ -215,15 +369,53 @@ function val(id) {
   return (el && el.value || '').trim();
 }
 
+function selectedOrderLines() {
+  return st.picks.map(w => ({ w, qty: Math.max(0, parseInt(st.qtys[w.id], 10) || 0) })).filter(x => x.qty > 0);
+}
+
 function summary() {
-  st.qty = parseInt(document.getElementById('qn').value, 10) || 6;
-  return `<b>Selectie:</b> ${st.picks.map(w => w.name + ' (' + w.producer + ')').join(', ')}<br>` +
-    `<b>Aantal:</b> ${st.qty} flessen · <b>Budget:</b> ${st.budget || 'geen voorkeur'} per fles<br>` +
-    `<b>Gelegenheid:</b> ${st.occ || '–'} · <b>Gerecht:</b> ${st.food.map(f => FOOD_NAME[f]).join(', ') || '–'} · <b>Kleur:</b> ${st.color.map(c => COLOR_NAME[c] || 'verras me').join(', ') || '–'}`;
+  const lines = selectedOrderLines();
+  const list = lines.length
+    ? lines.map(x => wineName(x.w) + ' × ' + x.qty + ' (' + formatPrice(x.w) + ')').join(', ')
+    : t('order.summary.none');
+  const total = lines.reduce((n, x) => n + x.qty, 0);
+  const bottles = total === 1 ? t('order.bottle.one') : t('order.bottle.many', { n: total });
+  const food = st.food.map(f => t('opt.food.' + f)).join(', ') || '–';
+  const color = st.color.map(c => t('opt.color.' + (c === 'any' ? 'any' : c))).join(', ') || '–';
+  return `<b>${t('order.summary.sel')}:</b> ${list}<br>` +
+    `<b>${t('order.summary.qty')}:</b> ${bottles}<br>` +
+    `<b>${t('order.summary.occ')}:</b> ${st.occ ? t('opt.occ.' + st.occ) : '–'} · <b>${t('order.summary.food')}:</b> ${food} · <b>${t('order.summary.color')}:</b> ${color}`;
 }
 
 function renderOrder() {
+  const box = document.getElementById('order-qtys');
+  st.picks.forEach(w => {
+    if (st.qtys[w.id] == null) st.qtys[w.id] = 1;
+  });
+  if (!box) return;
+  if (!st.picks.length) {
+    box.innerHTML = '<p class="ow-empty">' + t('order.empty') + '</p>';
+  } else {
+    box.innerHTML = '<div class="sub2">' + t('order.qtyTitle') + '</div>' + st.picks.map(w =>
+      `<div class="ow">
+        <div class="ow-info"><strong>${wineName(w)}</strong><span>${w.example ? t('label.exampleWine') + ' · ' : ''}${formatPrice(w)}</span></div>
+        <div class="qty" data-id="${w.id}">
+          <button type="button" data-d="-1" aria-label="${t('form.less')}">−</button>
+          <input value="${st.qtys[w.id]}" inputmode="numeric" aria-label="${t('form.qtyOf', { name: wineName(w) })}">
+          <button type="button" data-d="1" aria-label="${t('form.more')}">+</button>
+        </div>
+      </div>`
+    ).join('');
+  }
   document.getElementById('sum').innerHTML = summary();
+}
+
+function setQty(id, n) {
+  st.qtys[id] = Math.max(0, n);
+  const input = document.querySelector(`.qty[data-id="${id}"] input`);
+  if (input) input.value = st.qtys[id];
+  const sum = document.getElementById('sum');
+  if (sum) sum.innerHTML = summary();
 }
 
 function flash() {
@@ -248,10 +440,11 @@ function next() {
         document.getElementById(i).style.borderColor = '';
       }
     });
+    if (!selectedOrderLines().length) ok = false;
     if (!ok) return;
     const txt = document.getElementById('sum').innerText +
       `\n\nNaam: ${val('f_name')}\nE-mail: ${val('f_mail')}\nTelefoon: ${val('f_tel')}\nLevering: ${val('f_lev')}\nOpmerking: ${val('f_note')}`;
-    const subject = 'Bestelaanvraag via smaakquiz';
+    const subject = t('mail.subject');
     document.getElementById('mailto').href =
       'mailto:' + SHOP.email +
       '?subject=' + encodeURIComponent(subject) +
@@ -270,8 +463,6 @@ function applyDemoAnswers() {
   st.region = [];
   st.style = 'classic';
   markSel('style', 'classic');
-  st.budget = '20-40 euro';
-  markSel('budget', '20-40 euro');
   st.taste = { round: .5, body: .7, earthy: .7, sweet: .05 };
 }
 
@@ -285,6 +476,8 @@ function openFromHash() {
     if (h === '#quiz-thanks') {
       document.getElementById('f_name').value = 'Jan Peeters';
       document.getElementById('f_mail').value = 'jan@voorbeeld.be';
+      idx = flow.indexOf('result');
+      show();
       idx = flow.indexOf('order');
       show();
       next();
@@ -293,7 +486,7 @@ function openFromHash() {
     if (h === '#quiz-order') {
       idx = flow.indexOf('result');
       show();
-      idx++;
+      idx = flow.indexOf('order');
       document.getElementById('f_name').value = 'Jan Peeters';
       document.getElementById('f_mail').value = 'jan@voorbeeld.be';
       show();
@@ -306,7 +499,7 @@ function openFromHash() {
   if (m) {
     const n = +m[1];
     applyDemoAnswers();
-    idx = Math.max(0, Math.min(FLOW.length - 1, n - 1));
+    idx = Math.max(0, Math.min(QUESTIONS.length - 1, n - 1));
     show();
     return true;
   }
@@ -314,16 +507,44 @@ function openFromHash() {
   return true;
 }
 
+window.onLangChange = function () {
+  fillShop();
+  renderRegions();
+  if (document.body.classList.contains('quiz-on')) show();
+};
+
+const answersBox = document.getElementById('answers');
+if (answersBox) {
+  answersBox.addEventListener('click', e => {
+    const b = e.target.closest('[data-jump]');
+    if (!b) return;
+    const i = flow.indexOf(b.dataset.jump);
+    if (i >= 0) { idx = i; show(); }
+  });
+}
+
 fillShop();
 renderRegions();
 bindChoices(document);
 document.querySelectorAll('[data-t]').forEach(r => r.addEventListener('input', () => { st.taste[r.dataset.t] = r.value / 100; }));
-document.querySelectorAll('.qty [data-d]').forEach(b => {
-  b.addEventListener('click', () => {
-    const i = document.getElementById('qn');
-    i.value = Math.max(1, (parseInt(i.value, 10) || 1) + parseInt(b.dataset.d, 10));
+const orderBox = document.getElementById('order-qtys');
+if (orderBox) {
+  orderBox.addEventListener('click', e => {
+    const btn = e.target.closest('[data-d]');
+    if (!btn) return;
+    const wrap = btn.closest('.qty');
+    if (!wrap || !wrap.dataset.id) return;
+    const cur = parseInt(st.qtys[wrap.dataset.id], 10) || 0;
+    setQty(wrap.dataset.id, cur + parseInt(btn.dataset.d, 10));
   });
-});
+  orderBox.addEventListener('change', e => {
+    const input = e.target.closest('.qty input');
+    if (!input) return;
+    const wrap = input.closest('.qty');
+    if (!wrap || !wrap.dataset.id) return;
+    setQty(wrap.dataset.id, parseInt(input.value, 10) || 0);
+  });
+}
 document.getElementById('start').addEventListener('click', startQuiz);
 document.getElementById('qnext').addEventListener('click', next);
 document.getElementById('qskip').addEventListener('click', () => { idx++; show(); });
