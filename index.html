@@ -15,12 +15,15 @@ body{min-height:100vh;display:flex;flex-direction:column}
 a{color:inherit;text-decoration:none}
 .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
 header{padding:22px 0}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+header .to-prices{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+header .to-prices:hover{color:var(--ink)}
 .hero{padding:36px 0 48px;max-width:760px}
 .hero .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9E3446;margin-bottom:14px}
 .hero h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(40px,6.4vw,68px);line-height:1.08;letter-spacing:-.02em}
 .hero p{margin-top:18px;color:var(--mute);font-size:18px;max-width:38em}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding-bottom:64px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding-bottom:56px}
 .card{display:flex;flex-direction:column;min-height:420px;border:1px solid var(--line);overflow:hidden;transition:transform .2s,box-shadow .2s}
 .card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(22,18,16,.1)}
 .card .preview{height:220px;padding:28px 24px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
@@ -47,13 +50,30 @@ header{padding:22px 0}
 .c3 .preview em{font-style:italic;color:#8C6B28}
 .c3 .go{color:#8C6B28}
 
+
+.pricing{padding:48px 0 72px;border-top:1px solid var(--line)}
+.pricing .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9E3446;margin-bottom:14px}
+.pricing h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,4.8vw,48px);line-height:1.12;letter-spacing:-.02em}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}
+.plan{background:#fff;border:1px solid var(--line);padding:32px 28px 28px;display:flex;flex-direction:column}
+.plan h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
+.plan .amount{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(44px,5vw,56px);line-height:1;letter-spacing:-.03em}
+.plan .amount span{display:block;font-family:'Outfit','Helvetica Neue',system-ui,sans-serif;font-size:14px;letter-spacing:0;color:var(--mute);margin-top:10px;line-height:1.4}
+.plan ul{list-style:none;margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
+.plan li{position:relative;padding:7px 0 7px 20px;font-size:15px}
+.plan li:before{content:"–";position:absolute;left:0;color:#9E3446}
+.pricing .cta{margin-top:32px;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:22px}
+
 footer{margin-top:auto;border-top:1px solid var(--line);padding:20px 0;color:var(--mute);font-size:13px}
 
 @media (max-width:900px){
   .hero{padding:24px 0 32px}
-  .grid{grid-template-columns:1fr;gap:16px;padding-bottom:48px}
+  .grid{grid-template-columns:1fr;gap:16px;padding-bottom:40px}
   .card{min-height:0}
   .card .preview{height:180px}
+  .plans{grid-template-columns:1fr;gap:16px}
+  .pricing{padding:36px 0 56px}
+  .plan{padding:26px 22px}
 }
 
 html.shot-full,html.shot-full body{min-height:0!important;height:auto!important}
@@ -64,7 +84,7 @@ html.shot-full .qfoot{position:static!important}
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="brand">Smaakquiz · demo voor wijnhandelaars</div></div></header>
+<header><div class="wrap"><div class="brand">Smaakquiz · demo voor wijnhandelaars</div><a class="to-prices" href="#prijzen">Prijzen</a></div></header>
 <main class="wrap">
   <section class="hero">
     <p class="kicker">Drie looks, dezelfde keuzehulp</p>
@@ -84,6 +104,38 @@ html.shot-full .qfoot{position:static!important}
       <div class="preview"><span>Stijl 3</span><strong>De wijn <em>die bij je past</em></strong></div>
       <div class="meta"><h2>Klassiek &amp; warm</h2><p>Papier en crème, schreefletters en gouden accenten. Een klassieke, warme uitstraling.</p><div class="go">Bekijk stijl 3 →</div></div>
     </a>
+  </section>
+
+  <section class="pricing" id="prijzen">
+    <p class="kicker">Prijzen</p>
+    <h2>Een eenmalige prijs of een maandbedrag</h2>
+    <div class="plans">
+      <article class="plan">
+        <h3>Eenmalig</h3>
+        <p class="amount">€ 850 <span>excl. btw</span></p>
+        <ul>
+          <li>Smaakquiz met zes vragen</li>
+          <li>Drie wijnvoorstellen uit uw eigen assortiment</li>
+          <li>Keuze uit drie stijlen</li>
+          <li>Uw eigen logo en kleuren</li>
+          <li>Mobielvriendelijk</li>
+          <li>Bestel- of reserveerstap</li>
+        </ul>
+      </article>
+      <article class="plan">
+        <h3>Abonnement</h3>
+        <p class="amount">€ 25 <span>per maand excl. btw</span></p>
+        <ul>
+          <li>Smaakquiz met zes vragen</li>
+          <li>Drie wijnvoorstellen uit uw eigen assortiment</li>
+          <li>Keuze uit drie stijlen</li>
+          <li>Uw eigen logo en kleuren</li>
+          <li>Mobielvriendelijk</li>
+          <li>Bestel- of reserveerstap</li>
+        </ul>
+      </article>
+    </div>
+    <p class="cta">Interesse? Neem contact op.</p>
   </section>
 </main>
 <footer><div class="wrap"><p>Demo · smaakquiz voor wijnhandelaars — uw eigen assortiment, logo en kleuren mogelijk</p></div></footer>
